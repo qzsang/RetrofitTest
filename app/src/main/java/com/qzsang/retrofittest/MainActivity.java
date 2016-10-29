@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                         return response;
                     }
                 })
-                .connectTimeout(300, TimeUnit.MINUTES)//设置超时时间  30s
+                .connectTimeout(300, TimeUnit.SECONDS)//设置超时时间  30s
                 .build();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://apis.baidu.com/")
