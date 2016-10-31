@@ -10,8 +10,10 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.qzsang.retrofittest.net.RetrofitClient;
 import com.qzsang.retrofittest.net.bean.BooksBean;
 import com.qzsang.retrofittest.net.server.BookService;
+import com.qzsang.retrofittest.util.LogUtil;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -30,7 +32,10 @@ public class MainActivity extends AppCompatActivity {
 
     ListView lv_list;
 
-    String[] texts = new String[]{"简单测试请求方法Post"};
+    String[] texts = new String[]{
+            "简单测试请求方法Post",
+            "retrofit的简单封装ing",
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +79,9 @@ public class MainActivity extends AppCompatActivity {
                     case 0:
                         test0();
                         break;
-
+                    case 1:
+                        test1();
+                        break;
 
                 }
             }
@@ -87,9 +94,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    private void test1() {
+        BookService service = RetrofitClient.create(BookService.class);
+        Call<BooksBean> call = service.getBooks("2874");
+        call.enqueue(new Callback<BooksBean>() {
+            @Override
+            public void onResponse(Call<BooksBean> call, Response<BooksBean> response) {
+            //    BooksBean booksBean = response.body();
+                LogUtil.e("onResponse",  response.body() + "");
+            }
 
 
-
+            @Override
+            public void onFailure(Call<BooksBean> call, Throwable t) {
+                LogUtil.e("onFailure", "onFailure");
+            }
+        });
+    }
 
     private void test0() {
 
@@ -103,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
                         showLog("request url:" + request.url());
 
                         //一旦调用下面这句话  会导致session  close
-                       // showLog("body:" + response.body().string());
+                        // showLog("body:" + response.body().string());
 
 
                         showLog("isSuccessful:" + response.isSuccessful());
@@ -138,4 +159,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+
 }
