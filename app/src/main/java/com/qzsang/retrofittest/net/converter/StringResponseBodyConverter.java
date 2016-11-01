@@ -10,10 +10,8 @@ import retrofit2.Converter;
 public class StringResponseBodyConverter implements Converter<ResponseBody, String> {
     @Override
     public String convert(ResponseBody value) throws IOException {
-        String str = value.string();
-        LogUtil.e("StringResponseBodyConverter",str + "|");
         try {
-            return str;
+            return value.string();
         } finally {
             value.close();
         }

@@ -26,6 +26,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -96,20 +99,23 @@ public class MainActivity extends AppCompatActivity {
 
     private void test1() {
         BookService service = RetrofitClient.create(BookService.class);
-        Call<BooksBean> call = service.getBooks("2874");
-        call.enqueue(new Callback<BooksBean>() {
-            @Override
-            public void onResponse(Call<BooksBean> call, Response<BooksBean> response) {
-            //    BooksBean booksBean = response.body();
-                LogUtil.e("onResponse",  response.body() + "");
-            }
 
+      //  RetrofitClient.initObservable( service.getRxBooks("2874"))
+        service.getRxBooks("2874")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<BooksBean>() {
+                    @Override
+                    public void call(BooksBean booksBean) {
+                        showLog(booksBean.getList().get(20).getTitle());
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        showLog("fail");
+                    }
+                });
 
-            @Override
-            public void onFailure(Call<BooksBean> call, Throwable t) {
-                LogUtil.e("onFailure", "onFailure");
-            }
-        });
     }
 
     private void test0() {
